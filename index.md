@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Multichannel Nuclear Analaysis plugin
+title: Multichannel Nuclear Analysis plugin
 ---
 
 # Multi-Channel Nuclear Analysis
