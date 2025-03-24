@@ -104,6 +104,7 @@ var channel_max_display = newArray(4);
 var channel_colors = newArray(4);
 var channel_suffixes = newArray(4);
 var merge_channels = newArray(4);
+var channel_use_rolling_ball = newArray(4); // New array to track if rolling ball method should be used
 var segmentation_channel = 1;
 var num_channels = 4; // Number of channels selected by user
 var channelPage = 0;  // Current page in the channel configuration dialog
@@ -116,6 +117,7 @@ for (i=0; i<4; i++) {
     channel_colors[i] = "";
     channel_suffixes[i] = "";
     merge_channels[i] = -1;
+    channel_use_rolling_ball[i] = false; // Initialize rolling ball method to false
 }
 
 // Default values
@@ -335,6 +337,8 @@ function showChannelDialog() {
         }
         
         Dialog.addNumber("Background", ch_bg);
+        Dialog.addCheckbox("Use rolling ball method for background subtraction", channel_use_rolling_ball[i]);
+        Dialog.addMessage("   When rolling ball is checked, the background value is the radius in pixels");
         Dialog.addNumber("Max Display", ch_max);
         Dialog.addChoice("Color", availableLUTs, ch_color);
         Dialog.addString("Suffix", ch_suffix);
@@ -369,6 +373,7 @@ function showChannelDialog() {
     // Store the results for channels on this page
     for (i=startChannel; i<endChannel; i++) {
         channel_background[i] = Dialog.getNumber();
+        channel_use_rolling_ball[i] = Dialog.getCheckbox();
         channel_max_display[i] = Dialog.getNumber();
         channel_colors[i] = Dialog.getChoice();
         channel_suffixes[i] = Dialog.getString();
@@ -494,7 +499,7 @@ function processFile(dir, file, output_dir) {
         if (channel_active[i]) {
             channel_config = newArray(true, i+1, channel_background[i], 
                                    channel_max_display[i], channel_colors[i], 
-                                   channel_suffixes[i]);
+                                   channel_suffixes[i], channel_use_rolling_ball[i]);
             processChannel(titulo, titulo_base, channel_config);
         }
     }
@@ -548,7 +553,15 @@ function processSegmentationChannel(titulo, titulo_base, channel_num) {
     
     // Apply background subtraction if needed
     background = channel_background[channel_num-1];
-    if (background > 0) run("Subtract...", "value="+background);
+    if (background > 0) {
+        if (channel_use_rolling_ball[channel_num-1]) {
+            // Use rolling ball method with the specified radius
+            run("Subtract Background...", "rolling=" + background);
+        } else {
+            // Use traditional background subtraction
+            run("Subtract...", "value=" + background);
+        }
+    }
     
     // Apply the color and display settings
     run(colorName);
@@ -613,6 +626,7 @@ function processChannel(titulo, titulo_base, channel_config) {
     max_display = channel_config[3];
     color = channel_config[4];
     suffix = channel_config[5];
+    use_rolling_ball = channel_config[6];
     
     if (!active) return;
     
@@ -624,7 +638,15 @@ function processChannel(titulo, titulo_base, channel_config) {
     selectWindow(channel_title);
     
     // Apply processing
-    if (background > 0) run("Subtract...", "value="+background);
+    if (background > 0) {
+        if (use_rolling_ball) {
+            // Use rolling ball method with the specified radius
+            run("Subtract Background...", "rolling=" + background);
+        } else {
+            // Use traditional background subtraction
+            run("Subtract...", "value=" + background);
+        }
+    }
     run(color);
     setMinAndMax(0, max_display);
     
@@ -830,6 +852,11 @@ function saveParametersToFile(output_dir) {
         
         if (channel_active[i]) {
             File.append("  Background: " + channel_background[i], file_path);
+            rolling_method_text = "No";
+            if (channel_use_rolling_ball[i]) {
+                rolling_method_text = "Yes";
+            }
+            File.append("  Use Rolling Ball Method: " + rolling_method_text, file_path);
             File.append("  Max Display: " + channel_max_display[i], file_path);
             File.append("  Color: " + channel_colors[i], file_path);
             File.append("  Suffix: " + channel_suffixes[i], file_path);
