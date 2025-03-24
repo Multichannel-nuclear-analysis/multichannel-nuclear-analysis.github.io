@@ -1,1 +1,9 @@
 theme: jekyll-theme-cayman
+
+show_downloads: true
+
+github:
+  zip_url: https://github.com/Multichannel-nuclear-analysis/multichannel-nuclear-analysis.github.io/archive/master.zip
+  tar_url:   https://github.com/Multichannel-nuclear-analysis/multichannel-nuclear-analysis.github.io/tarball/master
+
+
