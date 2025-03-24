@@ -7,6 +7,17 @@ title: Multichannel Nuclear Analysis plugin
 
 An ImageJ/FIJI macro for analyzing multi-channel fluorescence images with a focus on nuclear segmentation using StarDist.
 
+## Table of Contents
+
+1. [Introduction](#introduction)
+2. [Installation](#installation)
+3. [Requirements](#requirements)
+4. [Usage](#usage)
+5. [Plugin for Merging Channels into Multi-Channel TIF Files](#merge)
+6. [Credits](#credits)
+7. [Citation](#cite)
+
+<a name="introduction"/>
 ## Introduction
 
 Quantitative analysis of fluorescence microscopy images requires multiple processing steps, from image acquisition to data extraction and statistical analysis. 
@@ -20,9 +31,11 @@ This tool allows researchers to easily extract fluorescence and shape based metr
 - Data organization and export for further analysis
 - Batch processing of multiple images
 
+<a name="installation"/>
 ## Installation
 Download the file "Multi_Channel_Nuclear_Analysis.ijm" by entering the file in the panel above and pressing the download button. Copy the file into FIJI/ImageJ plugins folder or, within FIJI/ImageJ, go to plugins > install and navigate to the file location. Restart FIJI before using the script. 
 
+<a name="requirements"/>
 ## Requirements
 
 - [ImageJ](https://imagej.nih.gov/ij/download.html) or [FIJI](https://fiji.sc/) (recommended)
@@ -31,7 +44,7 @@ Download the file "Multi_Channel_Nuclear_Analysis.ijm" by entering the file in t
   - [CSBDeep](https://github.com/CSBDeep/CSBDeep_website/wiki/CSBDeep-in-Fiji) (required for StarDist to function)
 - Multi-channel fluorescence images (TIF and CZI format supported)
 
-### Plugin Installation
+### Stardist and CSBDeep Installation
 
 To install the required plugins in FIJI:
 1. Open FIJI
@@ -46,10 +59,11 @@ To install the required plugins in FIJI:
 
 This will ensure that both StarDist and its dependency CSBDeep are properly installed.
 
+<a name="usage"/>
 ## Usage
 
 1. Open ImageJ/FIJI
-2. Run the macro by selecting `Plugins > Multi-Channel Analysis > Run Analysis`
+2. Run the macro by selecting `Plugins > Multi-Channel Analysis` (bottom of the list)
 3. Follow the step-by-step dialog boxes to configure your analysis
 4. Choose your input directory containing images 
 5. Review results in the output directory
@@ -130,6 +144,7 @@ The CSV tables are the primary output for further quantitative analysis:
 - Adjust the StarDist parameters if needed for optimal segmentation
 - Consider pre-processing images if they have high background or noise
 
+<a name="merge"/>
 ## Plugin for Merging Channels into Multi-Channel TIF Files
 
 Some microscopes (such as Evos microscopes from ThermoFisher Scientific) save each channel as a separate TIF file instead of combining them into a multi-channel file. For these cases, we provide a companion plugin called `Merge_multi_channel_tif.ijm` that merges separate channel files into a single multi-channel TIF file before analysis.
@@ -158,6 +173,7 @@ For the channel merging plugin to work correctly, your files must follow a consi
 
 The plugin will identify files with the same base name, merge them according to the channel configuration you specify, and save the result as a multi-channel TIF file that can be used with the main analysis tool.
 
+<a name="credits"/>
 ## Credits
 
 Developed by Ariel Waisman at FLENI, Argentina
@@ -167,5 +183,6 @@ This tool utilizes the [StarDist](https://github.com/stardist/stardist) algorith
 > Cell Detection with Star-convex Polygons.  
 > International Conference on Medical Image Computing and Computer-Assisted Intervention (MICCAI), Granada, Spain, September 2018.
 
+<a name="citation"/>
 ## Citation
 Pending publication
