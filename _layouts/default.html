@@ -14,48 +14,53 @@
       document.addEventListener('DOMContentLoaded', function() {
         // Buttons
         document.getElementById('Button_git').addEventListener('click', function() {
-          gtag('event', 'Button-view-git', {
-            'event_category': 'Buttons',
-            'event_label': 'Button-view-git',
+          gtag('event', 'download_button_click', {
+            'button_name': 'view_github',
+            'button_type': 'github_link'
           });
-          console.log("funciona");
+          console.log("Button_git clicked");
         });
 
         document.getElementById('Button_zip')?.addEventListener('click', function() {
-          gtag('event', 'Button-download-ZIP', {
-            'event_category': 'Buttons',
-            'event_label': 'Button-download-ZIP',
+          gtag('event', 'download_button_click', {
+            'button_name': 'download_zip',
+            'button_type': 'zip_download'
           });
-          console.log("funciona");
+          console.log("Button_zip clicked");
         });
 
         document.getElementById('Button_tar')?.addEventListener('click', function() {
-          gtag('event', 'Button-download-TAR', {
-            'event_category': 'Buttons',
-            'event_label': 'Button-download-TAR',
+          gtag('event', 'download_button_click', {
+            'button_name': 'download_tar',
+            'button_type': 'tar_download'
           });
+          console.log("Button_tar clicked");
         });
 
-        // New download function
-        document.getElementById('Button_script_Multichannel').addEventListener('click', function() {
-          gtag('event', 'Button-download-Multichannel-Script', {
-            'event_category': 'Buttons',
-            'event_label': 'Button-download-Multichannel-Script',
+        // Multichannel Analysis Script download
+        document.getElementById('Button_script').addEventListener('click', function() {
+          gtag('event', 'file_download', {
+            'file_name': 'Multi_Channel_Nuclear_Analysis.ijm',
+            'file_type': 'ijm_script',
+            'file_purpose': 'multichannel_analysis'
           });
+          console.log("Multichannel script download clicked");
           downloadFile(
             'https://raw.githubusercontent.com/Multichannel-nuclear-analysis/multichannel-nuclear-analysis.github.io/refs/heads/main/Multi_Channel_Nuclear_Analysis.ijm', 
             'Multi_Channel_Nuclear_Analysis.ijm'
           );
         });
 
-        // Download function for Merging plugin
-        document.getElementById('Button_script_Merging').addEventListener('click', function() {
-          gtag('event', 'Button-download-Merging-Script', {
-            'event_category': 'Buttons',
-            'event_label': 'Button-download-Merging-Script',
+        // Merging plugin download
+        document.getElementById('Button_script_Merging')?.addEventListener('click', function() {
+          gtag('event', 'file_download', {
+            'file_name': 'Merge_multi_channel_tif.ijm',
+            'file_type': 'ijm_script',
+            'file_purpose': 'channel_merging'
           });
+          console.log("Merging script download clicked");
           downloadFile(
-            'https://raw.githubusercontent.com/Multichannel-nuclear-analysis/multichannel-nuclear-analysis.github.io/refs/heads/main/Merge_multi_channel_tif.ijm', 
+            'https://github.com/Multichannel-nuclear-analysis/multichannel-nuclear-analysis.github.io/raw/refs/heads/main/Merge_multi_channel_tif.ijm', 
             'Merge_multi_channel_tif.ijm'
           );
         });
@@ -101,7 +106,7 @@
       <a href="https://github.com/Multichannel-nuclear-analysis/multichannel-nuclear-analysis.github.io" class="btn" id="Button_git">View on GitHub</a>
       
       <!-- Replaced previous download link with a button that uses the new download function -->
-      <a href="javascript:void(0);" class="btn" id="Button_script_Multichannel">Download Multichannel Analysis plugin</a>
+      <a href="javascript:void(0);" class="btn" id="Button_script">Download Multichannel Analysis plugin</a>
       <a href="javascript:void(0);" class="btn" id="Button_script_Merging">Download Merging plugin</a>
 
       
