@@ -10,37 +10,38 @@
 
       gtag('config', 'G-7XL5SNRXCE');
 
-      // Buttons
-      $(document).ready(function() {
-        $('#Button_git').click(function() {
-          gtag('event', 'Button-view-git',{
-                    'event_category': 'Buttons',
-                    'event_label': 'Button-view-git',
-               });
-               console.log("funciona");
+      // Wait for DOM to be fully loaded
+      document.addEventListener('DOMContentLoaded', function() {
+        // Buttons
+        document.getElementById('Button_git').addEventListener('click', function() {
+          gtag('event', 'Button-view-git', {
+            'event_category': 'Buttons',
+            'event_label': 'Button-view-git',
+          });
+          console.log("funciona");
         });
 
-        $('#Button_zip').click(function() {
-          gtag('event', 'Button-download-ZIP',{
-                    'event_category': 'Buttons',
-                    'event_label': 'Button-download-ZIP',
-               });
-               console.log("funciona");
+        document.getElementById('Button_zip')?.addEventListener('click', function() {
+          gtag('event', 'Button-download-ZIP', {
+            'event_category': 'Buttons',
+            'event_label': 'Button-download-ZIP',
+          });
+          console.log("funciona");
         });
 
-        $('#Button_tar').click(function() {
-          gtag('event', 'Button-download-TAR',{
-                    'event_category': 'Buttons',
-                    'event_label': 'Button-download-TAR',
-               });
+        document.getElementById('Button_tar')?.addEventListener('click', function() {
+          gtag('event', 'Button-download-TAR', {
+            'event_category': 'Buttons',
+            'event_label': 'Button-download-TAR',
+          });
         });
 
         // New download function
-        $('#Button_script').click(function() {
-          gtag('event', 'Button-download-Script',{
-                    'event_category': 'Buttons',
-                    'event_label': 'Button-download-Script',
-               });
+        document.getElementById('Button_script').addEventListener('click', function() {
+          gtag('event', 'Button-download-Script', {
+            'event_category': 'Buttons',
+            'event_label': 'Button-download-Script',
+          });
           downloadFile(
             'https://raw.githubusercontent.com/Multichannel-nuclear-analysis/multichannel-nuclear-analysis.github.io/refs/heads/main/Multi_Channel_Nuclear_Analysis.ijm', 
             'Multi_Channel_Nuclear_Analysis.ijm'
@@ -86,7 +87,7 @@
       <a href="https://github.com/Multichannel-nuclear-analysis/multichannel-nuclear-analysis.github.io" class="btn" id="Button_git">View on GitHub</a>
       
       <!-- Replaced previous download link with a button that uses the new download function -->
-      <a href="https://github.com/Multichannel-nuclear-analysis/multichannel-nuclear-analysis.github.io/raw/refs/heads/main/Multi_Channel_Nuclear_Analysis.ijm" class="btn" id="Button_script">Download Script 1 NOW</a>
+      <a href="javascript:void(0);" class="btn" id="Button_script">Download Script</a>
       
       {% if site.show_downloads %}
         <a href="{{ site.github.zip_url }}" class="btn" id="Button_zip">Download .zip</a>
