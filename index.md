@@ -5,7 +5,7 @@ title: Multichannel Nuclear Analysis plugin
 
 # Multi-Channel Nuclear Analysis
 
-An ImageJ/FIJI macro for analyzing multi-channel fluorescence images with a focus on nuclear segmentation using StarDist.
+An ImageJ/FIJI plugin for analyzing multi-channel fluorescence images with a focus on nuclear segmentation using StarDist.
 
 ## Table of Contents
 
@@ -20,7 +20,7 @@ An ImageJ/FIJI macro for analyzing multi-channel fluorescence images with a focu
 <a name="introduction"/>
 ## Introduction
 
-Quantitative analysis of fluorescence microscopy images requires multiple processing steps, from image acquisition to data extraction and statistical analysis. 
+Quantitative analysis of fluorescence microscopy images requires multiple steps, from image acquisition, followed by data extraction, visualization and statistical analysis. 
 
 ![Analysis Workflow](Figure1_Readme.png)
 
@@ -42,11 +42,9 @@ Download the file "Multi_Channel_Nuclear_Analysis.ijm" by entering the file in t
 - The following plugins installed in ImageJ/FIJI:
   - [StarDist](https://github.com/stardist/stardist)
   - [CSBDeep](https://github.com/CSBDeep/CSBDeep_website/wiki/CSBDeep-in-Fiji) (required for StarDist to function)
-- Multi-channel fluorescence images (TIF and CZI format supported)
 
-### Stardist and CSBDeep Installation
 
-To install the required plugins in FIJI:
+To install Stardist and CSBDeep plugins in FIJI:
 1. Open FIJI
 2. Go to `Help > Update...`
 3. Click on `Manage update sites`
@@ -80,9 +78,14 @@ Before running the script, it's recommended to:
 
 1. **Explore Your Images**: Open a representative image in ImageJ/FIJI
 2. **Determine Channel Count**: Check how many channels your images have (1-4 supported)
-3. **Note Background Values**: Determine appropriate background subtraction values for each channel
-4. **Determine Max Display Values**: Find suitable brightness values for optimal visualization
-5. **Plan Channel Assignments**: Decide which channel will be used for nuclear segmentation
+3. **Choose Background Subtraction Method**: For each channel, decide whether to use:
+   - Standard background subtraction: Best for images with uniform background
+   - Rolling ball background subtraction: Better for images with uneven background illumination
+4. **Set Background Values**: 
+   - For standard subtraction: Determine appropriate background values to subtract from each channel
+   - For rolling ball method: Determine appropriate radius (in pixels) for each channel
+5. **Determine Max Display Values**: Find suitable brightness values for optimal visualization
+6. **Plan Channel Assignments**: Decide which channel will be used for nuclear segmentation
 
 The values you determine in this preparation stage will be used in the configuration dialog boxes when running the script.
 
@@ -97,6 +100,9 @@ The script offers a user-friendly interface with three main configuration steps:
 2. **Channel Configuration**:
    - For each channel, set:
      - Background subtraction value
+     - Background subtraction method:
+       - Standard subtraction: Subtracts a fixed value from each pixel
+       - Rolling ball method: Uses ImageJ's rolling ball algorithm to remove uneven background (value represents radius in pixels)
      - Maximum display value
      - Color for visualization
      - Suffix for naming output files
@@ -141,6 +147,8 @@ The CSV tables are the primary output for further quantitative analysis:
 
 - Run the macro on a representative subset of images first to validate settings
 - Ensure your nuclear segmentation works well using Stardist. If you get subnuclear segmentation, try changing the scale of the images (ctrl+E in FIJI)
+- For images with uneven background illumination, use the rolling ball method rather than standard subtraction 
+- Choose an appropriate rolling ball radius: typically 2-3× the size of the largest object that is not part of the background
 - Adjust the StarDist parameters if needed for optimal segmentation
 - Consider pre-processing images if they have high background or noise
 
