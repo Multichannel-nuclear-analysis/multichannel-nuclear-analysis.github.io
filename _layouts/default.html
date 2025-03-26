@@ -96,6 +96,15 @@
         const scriptButton = document.getElementById('Button_script_plugin');
         if (scriptButton) {
           scriptButton.addEventListener('click', function() {
+            // First send a specific button click event (easy to track in GA4)
+            sendGAEvent('multichannel_plugin_download', {
+              'event_category': 'downloads',
+              'event_label': 'multichannel_script',
+              'download_type': 'plugin',
+              'download_count': 1
+            });
+            
+            // Then proceed with download with file_download event for general tracking
             const scriptParams = {
               'event_category': 'downloads',
               'event_label': 'multichannel_script',
@@ -116,6 +125,15 @@
         const mergingButton = document.getElementById('Button_script_Merging');
         if (mergingButton) {
           mergingButton.addEventListener('click', function() {
+            // First send a specific button click event (easy to track in GA4)
+            sendGAEvent('merging_plugin_download', {
+              'event_category': 'downloads',
+              'event_label': 'merging_script',
+              'download_type': 'plugin',
+              'download_count': 1
+            });
+            
+            // Then proceed with download with file_download event for general tracking
             const mergingParams = {
               'event_category': 'downloads',
               'event_label': 'merging_script',
