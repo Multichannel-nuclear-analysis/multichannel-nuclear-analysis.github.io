@@ -97,6 +97,38 @@ function getSubDirectories(dir) {
     return result;
 }
 
+// Multi-Channel Nuclear Analysis Script for Fiji ImageJ
+//
+// Created by Martín Waisman
+// FLENI, Buenos Aires, Argentina
+// martin.waisman@gmail.com
+//
+// Version 3.0.2 (2024)
+// License: Public Domain
+//
+//--------------------------------------------------
+
+// Define global variables
+var background_value = 0;  // Default background value
+var use_rolling_ball = false;  // Default to not using rolling ball method
+var output_dir = "";      // Output directory for results
+var first_channel = 0;    // First active channel (for configuration checks)
+var debug_mode = false;   // Debug mode flag
+var save_ROI_set = false; // Flag to save ROI set
+var create_merge = true;  // Flag to create merged image
+var analyze_batch = false; // Flag to indicate batch mode
+var rolling_bg_value = 0;  // Stores the rolling background mean
+var rolling_bg_suffix = ""; // Stores the channel suffix for the rolling background
+
+// Define channel configuration arrays
+var channel_active = newArray(4);
+var channel_title = newArray(4);
+var channel_background = newArray(4);
+var channel_display_max = newArray(4);
+var channel_lut = newArray(4);
+var channel_suffixes = newArray(4);
+var channel_use_rolling_ball = newArray(4);
+
 // Global variables for storing user choices
 var channel_active = newArray(4);
 var channel_background = newArray(4);
@@ -637,10 +669,23 @@ function processChannel(titulo, titulo_base, channel_config) {
     run("Duplicate...", "title='"+channel_title+"' duplicate channels="+channel_num);
     selectWindow(channel_title);
     
+    // Reset rolling_bg_value for this channel
+    rolling_bg_value = 0;
+    rolling_bg_suffix = "";
+    rolling_bg_column_name = "";
+    
+    // Calculate and store the rolling background mean first if needed
+    if (background > 0 && use_rolling_ball) {
+        calculateAndStoreRollingBackground(channel_title, channel_num);
+    }
+    
+    // Get original image ID to ensure we return to it
+    original_id = getImageID();
+    
     // Apply processing
     if (background > 0) {
         if (use_rolling_ball) {
-            // Use rolling ball method with the specified radius
+            // Apply the rolling ball background subtraction
             run("Subtract Background...", "rolling=" + background);
         } else {
             // Use traditional background subtraction
@@ -650,15 +695,42 @@ function processChannel(titulo, titulo_base, channel_config) {
     run(color);
     setMinAndMax(0, max_display);
     
+    // Make sure we're still working with the processed image
+    selectImage(original_id);
+    
     // Save processed image for measurements
     saveAs("PNG", output_dir + channel_title);
     
+    // Get the updated ID after saving
+    processed_id = getImageID();
+    
     // Create a duplicate for merge
+    selectImage(processed_id);
     run("Duplicate...", "title='"+merge_title+"'");
+    
+    // Make sure we select the processed image for measurements
+    selectImage(processed_id);
+    
+    // Clear results before measuring
+    run("Clear Results");
     
     // Measure and save results
     if (roiManager("count") > 0) {
+        print("Measuring " + roiManager("count") + " ROIs on " + channel_title);
         roiManager("Measure");
+        
+        // If we calculated a rolling background value, add it to each ROI
+        if (rolling_bg_value > 0) {
+            // Use a consistent column name format
+            rolling_bg_column = rolling_bg_suffix + "_Mean_rolling_background";
+            
+            for (i = 0; i < nResults; i++) {
+                setResult(rolling_bg_column, i, rolling_bg_value);
+            }
+            updateResults();
+            print("Debug - Added rolling background values to column: " + rolling_bg_column);
+        }
+        
         saveAs("Results", output_dir + channel_title + "_table.csv");
         run("Clear Results");
     }
@@ -898,7 +970,7 @@ function createCombinedMeasurements(titulo_base, output_dir) {
     
     // Define which measurements are intensity-related and should have channel prefixes
     // All other measurements are considered shape-related and will appear only once
-    intensityMeasurements = newArray("Mean", "StdDev", "Mode", "Min", "Max", "IntDen", "RawIntDen", "Median");
+    intensityMeasurements = newArray("Mean", "StdDev", "Mode", "Min", "Max", "IntDen", "RawIntDen", "Median", "Mean_rolling_background");
     
     // Read data from individual channel CSVs
     for (i=0; i<4; i++) {
@@ -1003,7 +1075,7 @@ function createCombinedMeasurements(titulo_base, output_dir) {
                     channelPrefix = substring(channelPrefix, 1);
                 }
                 
-                // If channelPrefix is empty, use "Ch#" as fallback
+                // If channelPrefix is empty, use Ch# as fallback
                 if (channelPrefix == "") {
                     channelPrefix = "Ch" + (i+1);
                 }
@@ -1022,6 +1094,11 @@ function createCombinedMeasurements(titulo_base, output_dir) {
                         }
                         
                         if (isIntensityMeasurement) {
+                            // Skip if this is a Mean_rolling_background column - we'll handle those separately
+                            if (label == "Mean_rolling_background") {
+                                continue;
+                            }
+                            
                             // Add to the header
                             headerLine = headerLine + "," + channelPrefix + "_" + label;
                             
@@ -1030,6 +1107,33 @@ function createCombinedMeasurements(titulo_base, output_dir) {
                             intensityChannelIndices = Array.concat(intensityChannelIndices, i);
                             intensityMeasurementIndices = Array.concat(intensityMeasurementIndices, h);
                         }
+                    }
+                }
+                
+                // If this channel uses rolling ball method, make sure we include the background column
+                if (channel_use_rolling_ball[i] && channel_background[i] > 0) {
+                    // Use consistent naming for the rolling background column
+                    rolling_bg_column = channelPrefix + "_Mean_rolling_background";
+                    
+                    // Find if this column already exists in headers
+                    rolling_bg_exists = false;
+                    
+                    // First check in the current header parts
+                    for (h=1; h<headerParts.length; h++) {
+                        // Check for both possible formats to avoid duplicates
+                        if (headerParts[h] == "Mean_rolling_background" || 
+                            headerParts[h] == rolling_bg_column) {
+                            rolling_bg_exists = true;
+                            break;
+                        }
+                    }
+                    
+                    // If not in headers, add it explicitly
+                    if (!rolling_bg_exists) {
+                        headerLine = headerLine + "," + rolling_bg_column;
+                        intensityHeaderParts = Array.concat(intensityHeaderParts, rolling_bg_column);
+                        intensityChannelIndices = Array.concat(intensityChannelIndices, i);
+                        intensityMeasurementIndices = Array.concat(intensityMeasurementIndices, -1); // -1 indicates special handling
                     }
                 }
             }
@@ -1103,29 +1207,84 @@ function createCombinedMeasurements(titulo_base, output_dir) {
                 chanIndex = intensityChannelIndices[idx];
                 measIndex = intensityMeasurementIndices[idx];
                 
-                // Get the data for this measurement
-                if (channel_active[chanIndex] && channelData[chanIndex] != "") {
-                    csvLines = split(channelData[chanIndex], "\n");
-                    
-                    // Make sure we have enough lines in this channel's data
-                    if (csvLines.length > roi+1) {  // +1 because first line is header
-                        rowData = csvLines[roi+1];
-                        rowParts = split(rowData, ",");
+                // Handle special case for rolling background
+                if (measIndex == -1) {
+                    // This is a rolling background column
+                    if (channel_use_rolling_ball[chanIndex] && channel_background[chanIndex] > 0) {
+                        // For rolling background, all ROIs in the same image have the same value
+                        // Get the channel suffix for the column name
+                        channel_suffix = channel_suffixes[chanIndex];
+                        if (startsWith(channel_suffix, "_")) {
+                            channel_suffix = substring(channel_suffix, 1);
+                        }
                         
-                        // Add this intensity measurement if it exists
-                        if (measIndex < rowParts.length) {
-                            line = line + "," + rowParts[measIndex];
+                        // If channel suffix is empty, use Ch# as fallback
+                        if (channel_suffix == "") {
+                            channel_suffix = "Ch" + (chanIndex+1);
+                        }
+                        
+                        // Use the consistent column naming format
+                        rolling_bg_column = channel_suffix + "_Mean_rolling_background";
+                        
+                        // Look for the rolling background in any row
+                        csvLines = split(channelData[chanIndex], "\n");
+                        if (csvLines.length > 1) {
+                            // Get the header to find which column has our value
+                            headerLine = csvLines[0];
+                            headerParts = split(headerLine, ",");
+                            
+                            // Get a row's data
+                            rowData = csvLines[1];
+                            rowParts = split(rowData, ",");
+                            
+                            // Search for the rolling background value in the header
+                            rollingBgValue = "";
+                            for (v=1; v<headerParts.length && v<rowParts.length; v++) {
+                                // Check for both possible formats of the column name
+                                if (headerParts[v] == "Mean_rolling_background" || 
+                                    headerParts[v] == rolling_bg_column) {
+                                    rollingBgValue = rowParts[v];
+                                    break;
+                                }
+                            }
+                            
+                            if (rollingBgValue != "") {
+                                line = line + "," + rollingBgValue;
+                            } else {
+                                line = line + ",";
+                            }
                         } else {
-                            // No data for this measurement
                             line = line + ",";
                         }
                     } else {
-                        // No data for this ROI
                         line = line + ",";
                     }
                 } else {
-                    // Channel not active
-                    line = line + ",";
+                    // Regular intensity measurement
+                    // Get the data for this measurement
+                    if (channel_active[chanIndex] && channelData[chanIndex] != "") {
+                        csvLines = split(channelData[chanIndex], "\n");
+                        
+                        // Make sure we have enough lines in this channel's data
+                        if (csvLines.length > roi+1) {  // +1 because first line is header
+                            rowData = csvLines[roi+1];
+                            rowParts = split(rowData, ",");
+                            
+                            // Add this intensity measurement if it exists
+                            if (measIndex < rowParts.length) {
+                                line = line + "," + rowParts[measIndex];
+                            } else {
+                                // No data for this measurement
+                                line = line + ",";
+                            }
+                        } else {
+                            // No data for this ROI
+                            line = line + ",";
+                        }
+                    } else {
+                        // Channel not active
+                        line = line + ",";
+                    }
                 }
             }
             
@@ -1201,4 +1360,92 @@ function generateCompleteDataFile(output_dir) {
     } else {
         print("No _allChannels.csv files found in the output directory");
     }
+}
+
+// Function to calculate and store rolling background mean
+function calculateAndStoreRollingBackground(channel_title, channel_num) {
+    // Get the channel suffix for column naming
+    channel_suffix = channel_suffixes[channel_num-1];
+    if (startsWith(channel_suffix, "_")) {
+        channel_suffix = substring(channel_suffix, 1);
+    }
+    
+    // If channel suffix is empty, use Ch# as fallback
+    if (channel_suffix == "") {
+        channel_suffix = "Ch" + channel_num;
+    }
+    
+    // Backup current Results
+    if (nResults > 0) {
+        results_backup = newArray(nResults);
+        for (i = 0; i < nResults; i++) {
+            results_backup[i] = getResult("Mean", i);
+        }
+    } else {
+        results_backup = newArray(0);
+    }
+    
+    // Make sure we're working with the original channel window first
+    selectWindow(channel_title);
+    
+    // Create a temporary duplicate of the image for background calculation
+    temp_title = "temp_for_bg_" + random();
+    run("Duplicate...", "title='"+temp_title+"'");
+    selectWindow(temp_title);
+    
+    // Apply rolling ball background subtraction with create option to generate background
+    background = channel_background[channel_num-1];
+    run("Subtract Background...", "rolling=" + background + " create");
+    
+    // The background image will be the most recently created window
+    background_title = getTitle();
+    print("Debug - Background image title: " + background_title);
+    
+    // Ensure we're measuring the entire background image
+    selectWindow(background_title);
+    run("Select All");
+    
+    // Clear results before measuring
+    run("Clear Results");
+    
+    // Calculate mean of background
+    run("Measure");
+    background_mean = getResult("Mean", 0);
+    print("Debug - Background mean value: " + background_mean);
+    
+    // Close the background image
+    close(background_title);
+    
+    // Try to close the temporary image if it's still open
+    if (isOpen(temp_title)) {
+        selectWindow(temp_title);
+        close();
+    }
+    
+    // Return to the original channel window
+    selectWindow(channel_title);
+    
+    // Clear the temporary results
+    run("Clear Results");
+    
+    // Restore original Results if there were any
+    if (results_backup.length > 0) {
+        for (i = 0; i < results_backup.length; i++) {
+            setResult("Mean", i, results_backup[i]);
+        }
+        updateResults();
+    }
+    
+    // Store the rolling background value as a global variable for later use
+    rolling_bg_value = background_mean;
+    
+    // Store the suffix for later reference
+    rolling_bg_suffix = channel_suffix;
+    
+    // Use a standard column name format for consistency across all functions
+    rolling_bg_column_name = channel_suffix + "_Mean_rolling_background";
+    
+    print("Debug - Stored background mean: " + background_mean + " for later use with column " + rolling_bg_column_name);
+    
+    return background_mean;
 }
