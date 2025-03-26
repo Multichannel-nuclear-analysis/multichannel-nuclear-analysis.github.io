@@ -8,73 +8,36 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
-      gtag('config', 'G-7XL5SNRXCE');
-
-      // Wait for DOM to be fully loaded
-      document.addEventListener('DOMContentLoaded', function() {
-        // Buttons
-        document.getElementById('Button_git').addEventListener('click', function() {
-          gtag('event', 'download_button_click', {
-            'button_name': 'view_github',
-            'button_type': 'github_link'
-          });
-          console.log("Button_git clicked");
-        });
-
-        document.getElementById('Button_zip')?.addEventListener('click', function() {
-          gtag('event', 'download_button_click', {
-            'button_name': 'download_zip',
-            'button_type': 'zip_download'
-          });
-          console.log("Button_zip clicked");
-        });
-
-        document.getElementById('Button_tar')?.addEventListener('click', function() {
-          gtag('event', 'download_button_click', {
-            'button_name': 'download_tar',
-            'button_type': 'tar_download'
-          });
-          console.log("Button_tar clicked");
-        });
-
-        // Multichannel Analysis Script download
-        document.getElementById('Button_script_plugin').addEventListener('click', function() {
-          gtag('event', 'file_download', {
-            'file_name': 'Multi_Channel_Nuclear_Analysis.ijm',
-            'file_type': 'ijm_script',
-            'file_purpose': 'multichannel_analysis'
-          });
-          console.log("Multichannel script download clicked");
-          downloadFile(
-            'https://raw.githubusercontent.com/Multichannel-nuclear-analysis/multichannel-nuclear-analysis.github.io/refs/heads/main/Multi_Channel_Nuclear_Analysis.ijm', 
-            'Multi_Channel_Nuclear_Analysis.ijm'
-          );
-        });
-
-        // Merging plugin download
-        document.getElementById('Button_script_Merging')?.addEventListener('click', function() {
-          gtag('event', 'file_download', {
-            'file_name': 'Merge_multi_channel_tif.ijm',
-            'file_type': 'ijm_script',
-            'file_purpose': 'channel_merging'
-          });
-          console.log("Merging script download clicked");
-          downloadFile(
-            'https://raw.githubusercontent.com/Multichannel-nuclear-analysis/multichannel-nuclear-analysis.github.io/refs/heads/main/Merge_multi_channel_tif.ijm', 
-            'Merge_multi_channel_tif.ijm'
-          );
-        });
+      gtag('config', 'G-7XL5SNRXCE', {
+        'send_page_view': true
       });
 
-      
+      // Helper function to send GA4 events with callback
+      function sendGAEvent(eventName, params, callback) {
+        console.log('Sending GA event:', eventName, params);
+        gtag('event', eventName, {
+          ...params,
+          event_callback: function() {
+            console.log('GA event sent successfully:', eventName);
+            if (callback && typeof callback === 'function') {
+              callback();
+            }
+          }
+        });
+      }
 
       // Async download function
-      async function downloadFile(rawHref, name) {
+      async function downloadFile(rawHref, fileName, eventParams) {
         try {
+          // First send the GA event to ensure it's tracked before download starts
+          sendGAEvent('file_download', eventParams);
+          
+          // Then perform the download
+          console.log('Starting download of', fileName);
           const result = await fetch(rawHref, {method: 'get'});
           const blob = await result.blob();
           const aElement = document.createElement('a');
-          aElement.setAttribute('download', name);
+          aElement.setAttribute('download', fileName);
           const href = URL.createObjectURL(blob);
           aElement.href = href;
           aElement.setAttribute('target', '_blank');
@@ -82,11 +45,95 @@
           aElement.click();
           document.body.removeChild(aElement);
           URL.revokeObjectURL(href);
+          console.log('Download completed for', fileName);
         } catch (error) {
           console.error('Download failed:', error);
           alert('File download failed. Please try again.');
         }
       }
+
+      // Wait for DOM to be fully loaded
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM fully loaded, initializing GA event listeners');
+        
+        // GitHub button
+        const gitButton = document.getElementById('Button_git');
+        if (gitButton) {
+          gitButton.addEventListener('click', function() {
+            sendGAEvent('button_click', {
+              'event_category': 'engagement',
+              'event_label': 'view_github',
+              'button_name': 'view_github'
+            });
+          });
+        }
+
+        // ZIP download button
+        const zipButton = document.getElementById('Button_zip');
+        if (zipButton) {
+          zipButton.addEventListener('click', function() {
+            sendGAEvent('button_click', {
+              'event_category': 'engagement',
+              'event_label': 'download_zip',
+              'button_name': 'download_zip'
+            });
+          });
+        }
+
+        // TAR download button
+        const tarButton = document.getElementById('Button_tar');
+        if (tarButton) {
+          tarButton.addEventListener('click', function() {
+            sendGAEvent('button_click', {
+              'event_category': 'engagement',
+              'event_label': 'download_tar',
+              'button_name': 'download_tar'
+            });
+          });
+        }
+
+        // Multichannel Analysis Script download
+        const scriptButton = document.getElementById('Button_script_plugin');
+        if (scriptButton) {
+          scriptButton.addEventListener('click', function() {
+            const scriptParams = {
+              'event_category': 'downloads',
+              'event_label': 'multichannel_script',
+              'file_name': 'Multi_Channel_Nuclear_Analysis.ijm',
+              'file_type': 'script',
+              'content_type': 'ImageJ Macro'
+            };
+            
+            downloadFile(
+              'https://raw.githubusercontent.com/Multichannel-nuclear-analysis/multichannel-nuclear-analysis.github.io/refs/heads/main/Multi_Channel_Nuclear_Analysis.ijm', 
+              'Multi_Channel_Nuclear_Analysis.ijm',
+              scriptParams
+            );
+          });
+        }
+
+        // Merging plugin download
+        const mergingButton = document.getElementById('Button_script_Merging');
+        if (mergingButton) {
+          mergingButton.addEventListener('click', function() {
+            const mergingParams = {
+              'event_category': 'downloads',
+              'event_label': 'merging_script',
+              'file_name': 'Merge_multi_channel_tif.ijm',
+              'file_type': 'script',
+              'content_type': 'ImageJ Macro'
+            };
+            
+            downloadFile(
+              'https://raw.githubusercontent.com/Multichannel-nuclear-analysis/multichannel-nuclear-analysis.github.io/refs/heads/main/Merge_multi_channel_tif.ijm', 
+              'Merge_multi_channel_tif.ijm',
+              mergingParams
+            );
+          });
+        }
+        
+        console.log('All GA event listeners initialized');
+      });
     </script>
     <meta charset="UTF-8">
 
