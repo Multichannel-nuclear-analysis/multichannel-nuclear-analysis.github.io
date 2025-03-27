@@ -149,6 +149,12 @@ The CSV tables are the primary output for further quantitative analysis:
 - Ensure your nuclear segmentation works well using Stardist. If you get subnuclear segmentation, try changing the scale of the images (ctrl+E in FIJI)
 - For images with uneven background illumination, use the rolling ball method rather than standard subtraction 
 - Choose an appropriate rolling ball radius: typically 2-3× the size of the largest object that is not part of the background
+- When using the rolling ball background subtraction method, the plugin measures and stores the mean fluorescence intensity of the background image in the CSV files (column name: "[ChannelSuffix]_Mean_rolling_background")
+  - This measurement serves as a valuable internal control across your experimental conditions
+  - In comparable samples, the mean background fluorescence should be relatively consistent
+  - If one condition shows a significantly higher background value, it may indicate a methodological issue
+  - High cell density can particularly affect rolling ball background calculation, as the algorithm may not be able to properly distinguish background from densely packed cells
+  - Substantial differences in background measurements might suggest reconsidering the rolling ball radius or switching to a different background subtraction approach for that condition
 - Adjust the StarDist parameters if needed for optimal segmentation
 - Consider pre-processing images if they have high background or noise
 
