@@ -194,17 +194,16 @@ The ZIP file contains:
 
 ### Interactive Analysis in Google Colab
 
-Explore the analysis interactively using our Google Colab notebook:
-
-<a href="https://colab.research.google.com/drive/15ovG3oCTq_nsUUFpJENDh1qMzkvqgYWr?usp=sharing" target="_blank">
+Explore the analysis interactively using our Google Colab notebook   <a href="https://colab.research.google.com/drive/15ovG3oCTq_nsUUFpJENDh1qMzkvqgYWr?usp=sharing" target="_blank">
   <img border="0" alt="Open In Colab" src="./images/GoogleColab.svg">
 </a>
 
 The notebook demonstrates:
 1. Loading and exploring the CSV data from the ImageJ plugin
 2. Data cleaning and transformation
-3. Creating publication-quality visualizations
-4. Correlation analysis between NANOG and Oct6-mCherry expression
+3. Basic exploratory data analysis
+4. Creating publication-quality visualizations
+
 
 This example shows how different background subtraction methods (fixed value vs. rolling ball) can be applied to different channels based on their characteristics, and how to analyze the resulting data.
 
