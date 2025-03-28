@@ -150,6 +150,32 @@
           });
         }
         
+        // Add event listeners for example dataset download and Google Colab links
+        document.addEventListener('click', function(event) {
+          // Handle Example Dataset ZIP download
+          if (event.target.matches('[data-track="example-download"]') || 
+              (event.target.parentElement && event.target.parentElement.matches('[data-track="example-download"]'))) {
+            console.log('Example dataset download click detected');
+            sendGAEvent('Example_images_ZIP_download', {
+              'event_category': 'downloads',
+              'event_label': 'example_dataset',
+              'download_type': 'example_data',
+              'download_count': 1
+            });
+          }
+          
+          // Handle Google Colab click
+          if (event.target.matches('[data-track="google-colab"]') || 
+              (event.target.parentElement && event.target.parentElement.matches('[data-track="google-colab"]'))) {
+            console.log('Google Colab link click detected');
+            sendGAEvent('Clicked_Google_colab', {
+              'event_category': 'engagement',
+              'event_label': 'google_colab',
+              'outbound_link': true
+            });
+          }
+        });
+        
         console.log('All GA event listeners initialized');
       });
     </script>

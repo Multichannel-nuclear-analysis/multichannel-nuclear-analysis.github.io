@@ -181,9 +181,7 @@ Key experimental details:
 
 ### Analysis Files
 
-Download the example data and analysis files:
-
-[Download Example Dataset (ZIP)](https://github.com/Multichannel-nuclear-analysis/multichannel-nuclear-analysis.github.io/raw/main/example_data.zip)
+Download the example data and analysis files: <a href="https://github.com/Multichannel-nuclear-analysis/multichannel-nuclear-analysis.github.io/raw/main/example_data.zip" data-track="example-download">Download Example Dataset (ZIP)</a>
 
 The ZIP file contains:
 - Original microscopy images
@@ -192,7 +190,7 @@ The ZIP file contains:
 
 ### Interactive Analysis in Google Colab
 
-Explore the analysis interactively using our Google Colab notebook   <a href="https://colab.research.google.com/drive/15ovG3oCTq_nsUUFpJENDh1qMzkvqgYWr?usp=sharing" target="_blank">
+Explore the analysis interactively using our Google Colab notebook   <a href="https://colab.research.google.com/drive/15ovG3oCTq_nsUUFpJENDh1qMzkvqgYWr?usp=sharing" target="_blank" data-track="google-colab">
   <img border="0" alt="Open In Colab" src="./images/GoogleColab.svg">
 </a>
 
