@@ -200,3 +200,14 @@ This tool utilizes the [StarDist](https://github.com/stardist/stardist) algorith
 <a name="citation"/>
 ## Citation
 Pending publication
+
+
+
+# Test link to google colab
+
+Here's a link to our modified GoogleColab script: <a href="https://colab.research.google.com/drive/15ovG3oCTq_nsUUFpJENDh1qMzkvqgYWr?usp=sharing" target="_blank">
+    <img border="0" alt="W3Schools" src="./Images/GoogleColab.svg">
+  </a>
+
+  Link to the files ZIP:
+  
