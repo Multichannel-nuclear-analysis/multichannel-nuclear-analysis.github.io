@@ -168,12 +168,13 @@ To help users get started with data analysis, we provide an example dataset with
 
 ### Example Experiment
 
-This example is based on a real experiment involving mouse embryonic stem cells (mESCs) engineered to inducibly express a fusion protein comprising the transcription factor Oct6 linked to the mCherry fluorescent protein. Expression was induced by doxycycline treatment.
+This example is based on a real experiment involving mouse embryonic stem cells (mESCs) engineered to inducibly express a fusion protein comprising the transcription factor OCT6 linked to the mCherry fluorescent protein. Expression was induced by doxycycline treatment for 1, 2 or 3 days. An immunofluorescence was then performed against NANOG (alexa fluor 488), and nuclei were stained with DAPI. Channel 
 
 Key experimental details:
 - Cells: Mouse embryonic stem cells (mESCs)
-- Protein of interest: Oct6-mCherry fusion (induced by doxycycline)
-- Other markers: NANOG (pluripotency marker)
+- Channel 1: DAPI
+- Channel 2: NANOG-488
+- Channel 3: OCT6-mCherry
 - Background subtraction methods:
   - mCherry channel: Rolling ball method (to address non-homogeneous background)
   - NANOG channel: Fixed background value subtraction
@@ -182,7 +183,9 @@ Key experimental details:
 
 Download the example data and analysis files:
 
-<a href="https://github.com/Multichannel-nuclear-analysis/multichannel-nuclear-analysis.github.io/raw/main/example_data.zip" class="btn">Download Example Dataset (ZIP)</a>
+<a href="https://github.com/Multichannel-nuclear-analysis/multichannel-nuclear-analysis.github.io/raw/refs/heads/main/Example_Images_Waisman2024.zip" class="btn">Download Example Dataset (ZIP)</a>
+
+
 
 The ZIP file contains:
 - Original microscopy images
@@ -194,7 +197,7 @@ The ZIP file contains:
 Explore the analysis interactively using our Google Colab notebook:
 
 <a href="https://colab.research.google.com/drive/15ovG3oCTq_nsUUFpJENDh1qMzkvqgYWr?usp=sharing" target="_blank">
-  <img border="0" alt="Open In Colab" src="./Images/GoogleColab.svg">
+  <img border="0" alt="Open In Colab" src="./images/GoogleColab.svg">
 </a>
 
 The notebook demonstrates:
