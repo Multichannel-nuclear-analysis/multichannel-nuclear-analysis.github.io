@@ -13,9 +13,10 @@ An ImageJ/FIJI plugin for analyzing multi-channel fluorescence images with a foc
 2. [Installation](#installation)
 3. [Requirements](#requirements)
 4. [Usage](#usage)
-5. [Plugin for Merging Channels into Multi-Channel TIF Files](#merge)
-6. [Credits](#credits)
-7. [Citation](#cite)
+5. [Example Data Analysis with Python](#example)
+6. [Plugin for Merging Channels into Multi-Channel TIF Files](#merge)
+7. [Credits](#credits)
+8. [Citation](#cite)
 
 <a name="introduction"/>
 ## Introduction
@@ -158,6 +159,54 @@ The CSV tables are the primary output for further quantitative analysis:
 - Adjust the StarDist parameters if needed for optimal segmentation
 - Consider pre-processing images if they have high background or noise
 
+
+
+<a name="example"/>
+## Example Data Analysis with Python
+
+To help users get started with data analysis, we provide an example dataset with analysis code in Python. This demonstrates a typical workflow from raw data to visualization.
+
+### Example Experiment
+
+This example is based on a real experiment involving mouse embryonic stem cells (mESCs) engineered to inducibly express a fusion protein comprising the transcription factor Oct6 linked to the mCherry fluorescent protein. Expression was induced by doxycycline treatment.
+
+Key experimental details:
+- Cells: Mouse embryonic stem cells (mESCs)
+- Protein of interest: Oct6-mCherry fusion (induced by doxycycline)
+- Other markers: NANOG (pluripotency marker)
+- Background subtraction methods:
+  - mCherry channel: Rolling ball method (to address non-homogeneous background)
+  - NANOG channel: Fixed background value subtraction
+
+### Analysis Files
+
+Download the example data and analysis files:
+
+<a href="https://github.com/Multichannel-nuclear-analysis/multichannel-nuclear-analysis.github.io/raw/main/example_data.zip" class="btn">Download Example Dataset (ZIP)</a>
+
+The ZIP file contains:
+- Original microscopy images
+- The analysis subfolder with the results of running the plugin
+
+
+### Interactive Analysis in Google Colab
+
+Explore the analysis interactively using our Google Colab notebook:
+
+<a href="https://colab.research.google.com/drive/15ovG3oCTq_nsUUFpJENDh1qMzkvqgYWr?usp=sharing" target="_blank">
+  <img border="0" alt="Open In Colab" src="./Images/GoogleColab.svg">
+</a>
+
+The notebook demonstrates:
+1. Loading and exploring the CSV data from the ImageJ plugin
+2. Data cleaning and transformation
+3. Creating publication-quality visualizations
+4. Correlation analysis between NANOG and Oct6-mCherry expression
+
+This example shows how different background subtraction methods (fixed value vs. rolling ball) can be applied to different channels based on their characteristics, and how to analyze the resulting data.
+
+
+
 <a name="merge"/>
 ## Plugin for Merging Channels into Multi-Channel TIF Files
 
@@ -187,6 +236,7 @@ For the channel merging plugin to work correctly, your files must follow a consi
 
 The plugin will identify files with the same base name, merge them according to the channel configuration you specify, and save the result as a multi-channel TIF file that can be used with the main analysis tool.
 
+
 <a name="credits"/>
 ## Credits
 
@@ -200,14 +250,3 @@ This tool utilizes the [StarDist](https://github.com/stardist/stardist) algorith
 <a name="citation"/>
 ## Citation
 Pending publication
-
-
-
-# Test link to google colab
-
-Here's a link to our modified GoogleColab script: <a href="https://colab.research.google.com/drive/15ovG3oCTq_nsUUFpJENDh1qMzkvqgYWr?usp=sharing" target="_blank">
-    <img border="0" alt="W3Schools" src="./Images/GoogleColab.svg">
-  </a>
-
-  Link to the files ZIP:
-  
