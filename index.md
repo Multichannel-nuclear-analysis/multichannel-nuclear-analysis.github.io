@@ -181,7 +181,8 @@ Key experimental details:
 
 ### Analysis Files
 
-Download the example data and analysis files: <a href="https://github.com/Multichannel-nuclear-analysis/multichannel-nuclear-analysis.github.io/raw/main/example_data.zip" data-track="example-download">Download Example Dataset (ZIP)</a>
+Download the example data and analysis files: <a href="https://github.com/Multichannel-nuclear-analysis/multichannel-nuclear-analysis.github.io/raw/refs/heads/gh-pages/Example_Images_Waisman2024.zip" data-track="example-download">Download Example Dataset (ZIP)</a>
+
 
 The ZIP file contains:
 - Original microscopy images
