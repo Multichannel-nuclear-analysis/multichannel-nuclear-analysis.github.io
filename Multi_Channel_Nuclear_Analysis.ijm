@@ -368,9 +368,10 @@ function showChannelDialog() {
             ch_suffix = channel_suffixes[i];
         }
         
-        Dialog.addNumber("Background", ch_bg);
-        Dialog.addCheckbox("Use rolling ball method for background subtraction", channel_use_rolling_ball[i]);
-        Dialog.addMessage("   When rolling ball is checked, the background value is the radius in pixels");
+        Dialog.addNumber("Background / Radius", ch_bg);
+        Dialog.addCheckbox("Use rolling ball method for background subtraction. Set the radius in pixels in the textbox above", channel_use_rolling_ball[i]);
+        Dialog.addMessage("");
+       //Dialog.addMessage("   When rolling ball is checked, set the radius in pixels in the box above");
         Dialog.addNumber("Max Display", ch_max);
         Dialog.addChoice("Color", availableLUTs, ch_color);
         Dialog.addString("Suffix", ch_suffix);
