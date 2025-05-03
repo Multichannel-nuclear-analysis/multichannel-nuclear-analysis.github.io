@@ -166,13 +166,13 @@ The CSV tables are the primary output for further quantitative analysis:
 <a name="example"/>
 ## Full tutorial on youtube
 
-Watch our comprehensive tutorial on how to use the Multi-Channel Nuclear Analysis plugin:
+Watch the comprehensive tutorial on how to use the Multi-Channel Nuclear Analysis plugin:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/GKWkFDNUSdU" title="Multi-Channel Nuclear Analysis Tutorial" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## Example Data Analysis with Python
 
-To help users get started with data analysis, we provide an example dataset with analysis code in Python. This demonstrates a typical workflow from raw data to visualization.
+To help users get started with data analysis, I provide an example dataset with analysis code in Python. This demonstrates a typical workflow from raw data to visualization.
 
 ### Example Experiment
 
@@ -199,7 +199,7 @@ The ZIP file contains:
 
 ### Interactive Analysis in Google Colab
 
-Explore the analysis interactively using our Google Colab notebook   <a href="https://colab.research.google.com/drive/15ovG3oCTq_nsUUFpJENDh1qMzkvqgYWr?usp=sharing" target="_blank" data-track="google-colab">
+Explore the analysis interactively using the Google Colab notebook   <a href="https://colab.research.google.com/drive/15ovG3oCTq_nsUUFpJENDh1qMzkvqgYWr?usp=sharing" target="_blank" data-track="google-colab">
   <img border="0" alt="Open In Colab" src="./images/GoogleColab.svg">
 </a>
 
@@ -217,7 +217,7 @@ This example shows how different background subtraction methods (fixed value vs.
 <a name="merge"/>
 ## Plugin for Merging Channels into Multi-Channel TIF Files
 
-Some microscopes (such as Evos microscopes from ThermoFisher Scientific) save each channel as a separate TIF file instead of combining them into a multi-channel file. For these cases, we provide a companion plugin called `Merge_multi_channel_tif.ijm` that merges separate channel files into a single multi-channel TIF file before analysis.
+Some microscopes (such as Evos microscopes from ThermoFisher Scientific) save each channel as a separate TIF file instead of combining them into a multi-channel file. For these cases, I provide a companion plugin called `Merge_multi_channel_tif.ijm` that merges separate channel files into a single multi-channel TIF file before analysis.
 
 ### Installation and Usage
 
