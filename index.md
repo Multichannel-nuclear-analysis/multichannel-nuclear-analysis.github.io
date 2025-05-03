@@ -13,7 +13,7 @@ An ImageJ/FIJI plugin for analyzing multi-channel fluorescence images with a foc
 2. [Installation](#installation)
 3. [Requirements](#requirements)
 4. [Usage](#usage)
-5. [Example Data Analysis with Python](#example)
+5. [Tutorial and Example Data Analysis with Python](#example)
 6. [Plugin for Merging Channels into Multi-Channel TIF Files](#merge)
 7. [Credits](#credits)
 8. [Citation](#cite)
@@ -43,20 +43,22 @@ Download the file "Multi_Channel_Nuclear_Analysis.ijm" by entering the file in t
 - The following plugins installed in ImageJ/FIJI:
   - [StarDist](https://github.com/stardist/stardist)
   - [CSBDeep](https://github.com/CSBDeep/CSBDeep_website/wiki/CSBDeep-in-Fiji) (required for StarDist to function)
+  - [TensorFlow](https://imagej.net/libs/tensorflow) (required for StarDist to function)
 
 
-To install Stardist and CSBDeep plugins in FIJI:
+To install Stardist, CSBDeep, and TensorFlow plugins in FIJI:
 1. Open FIJI
 2. Go to `Help > Update...`
 3. Click on `Manage update sites`
 4. Check the boxes for:
    - **StarDist**
    - **CSBDeep**
+   - **TensorFlow**
 5. Click `Close`
 6. Click `Apply Changes`
 7. Restart FIJI
 
-This will ensure that both StarDist and its dependency CSBDeep are properly installed.
+This will ensure that StarDist and all its dependencies (CSBDeep and TensorFlow) are properly installed.
 
 <a name="usage"/>
 ## Usage
@@ -162,6 +164,12 @@ The CSV tables are the primary output for further quantitative analysis:
 
 
 <a name="example"/>
+## Full tutorial on youtube
+
+Watch our comprehensive tutorial on how to use the Multi-Channel Nuclear Analysis plugin:
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/GKWkFDNUSdU" title="Multi-Channel Nuclear Analysis Tutorial" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 ## Example Data Analysis with Python
 
 To help users get started with data analysis, we provide an example dataset with analysis code in Python. This demonstrates a typical workflow from raw data to visualization.
