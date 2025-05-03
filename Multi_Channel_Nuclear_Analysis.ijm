@@ -181,9 +181,25 @@ while (step >= 0) {
 run("Close All");
 //setBatchMode(true);
 
-// Select input directory
-dir = getDirectory("Choose input directory");
+// Select input directory with clearer instructions
+dir = getDirectory("Choose input directory containing images (select a FOLDER, not a file)");
+
+// Verify that a valid directory was selected
+if (dir == "") {
+    exit("No directory was selected. Please run the macro again and select a folder.");
+}
+
+// Ensure the path ends with a separator
+if (!endsWith(dir, File.separator)) {
+    dir = dir + File.separator;
+}
+
 list = getFileList(dir);
+
+// Check if any files were found
+if (list.length == 0) {
+    exit("No files found in the selected directory. Please choose a directory containing images.");
+}
 
 // Create output directory
 output_dir = dir + "Analysis" + File.separator;
@@ -509,10 +525,10 @@ function processFile(dir, file, output_dir) {
     // Check file extension to determine how to open it
     if (matches(file, ".*\\.czi$")) {
         // Use Bio-Formats for CZI files
-    run("Bio-Formats Importer", "open=["+path+"]" + " color_mode=Default view=Hyperstack stack_order=XYCZT");
+        run("Bio-Formats Importer", "open=["+path+"]" + " color_mode=Default view=Hyperstack stack_order=XYCZT");
     } else {
-        // Use standard ImageJ opener for TIF files
-        run("Open...", "path=["+path+"]");
+        // Use direct file opening for TIF files to avoid file dialog
+        open(path);
     }
     
     // Get base filename
