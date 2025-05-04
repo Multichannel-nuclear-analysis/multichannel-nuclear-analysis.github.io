@@ -184,6 +184,11 @@ run("Close All");
 // Select input directory with clearer instructions
 dir = getDirectory("Choose input directory containing images (select a FOLDER, not a file)");
 
+// Start timing after directory selection - this measures actual processing time
+getDateAndTime(start_year, start_month, start_dayOfWeek, start_dayOfMonth, start_hour, start_minute, start_second, start_msec);
+start_time = start_hour * 3600 + start_minute * 60 + start_second;
+print("Starting image processing at: " + IJ.pad(start_hour, 2) + ":" + IJ.pad(start_minute, 2) + ":" + IJ.pad(start_second, 2));
+
 // Verify that a valid directory was selected
 if (dir == "") {
     exit("No directory was selected. Please run the macro again and select a folder.");
@@ -217,6 +222,31 @@ for (i=0; i<list.length; i++) {
 
 // Generate a combined CSV with data from all images
 generateCompleteDataFile(output_dir);
+
+// Calculate execution time
+getDateAndTime(end_year, end_month, end_dayOfWeek, end_dayOfMonth, end_hour, end_minute, end_second, end_msec);
+end_time = end_hour * 3600 + end_minute * 60 + end_second;
+execution_time = end_time - start_time;
+hours = floor(execution_time / 3600);
+minutes = floor((execution_time % 3600) / 60);
+seconds = execution_time % 60;
+time_str = IJ.pad(hours, 2) + ":" + IJ.pad(minutes, 2) + ":" + IJ.pad(seconds, 2);
+
+// Print completion message to log
+print("----------------------------");
+print("Analysis complete!");
+print("Processing time: " + time_str + " (HH:MM:SS)");
+print("Results saved to: " + output_dir);
+
+// Append execution time to parameters file
+file_path = output_dir + "analysis_parameters.txt";
+File.append("", file_path);
+File.append("=== EXECUTION INFO ===", file_path);
+File.append("Processing time: " + time_str + " (HH:MM:SS)", file_path);
+File.append("Analysis complete!", file_path);
+
+// Show completion message
+showMessage("Multi-Channel Nuclear Analysis", "Analysis complete!\n\nProcessing time: " + time_str + " (HH:MM:SS)\n\nResults saved to:\n" + output_dir);
 
 // ---- GUI FUNCTIONS ----
 
