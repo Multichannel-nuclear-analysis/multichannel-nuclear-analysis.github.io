@@ -34,12 +34,12 @@ This tool allows researchers to easily extract fluorescence and shape based metr
 
 <a name="installation"/>
 ## Installation
-Download the file "Multi_Channel_Nuclear_Analysis.ijm" by entering the file in the panel above and pressing the download button. Copy the file into FIJI/ImageJ plugins folder or, within FIJI/ImageJ, go to plugins > install and navigate to the file location. Restart FIJI before using the script. 
+Download the file "Multi_Channel_Nuclear_Analysis.ijm" using the button at the top of the page. Copy the file into FIJI/ImageJ plugins folder or, within FIJI/ImageJ, go to plugins > install and navigate to the file location. Restart FIJI before using the script. 
 
 <a name="requirements"/>
 ## Requirements
 
-- [ImageJ](https://imagej.nih.gov/ij/download.html) or [FIJI](https://fiji.sc/) (recommended)
+- [ImageJ](https://imagej.net/ij/download.html) or [FIJI](https://fiji.sc/) (recommended)
 - The following plugins installed in ImageJ/FIJI:
   - [StarDist](https://github.com/stardist/stardist)
   - [CSBDeep](https://github.com/CSBDeep/CSBDeep_website/wiki/CSBDeep-in-Fiji) (required for StarDist to function)
@@ -87,7 +87,7 @@ Before running the script, it's recommended to:
 4. **Set Background Values**: 
    - For standard subtraction: Determine appropriate background values to subtract from each channel
    - For rolling ball method: Determine appropriate radius (in pixels) for each channel
-5. **Determine Max Display Values**: Find suitable brightness values for optimal visualization
+5. **Determine Max Display Values**: Find suitable brightness values for optimal visualization of PNG images
 6. **Plan Channel Assignments**: Decide which channel will be used for nuclear segmentation
 
 The values you determine in this preparation stage will be used in the configuration dialog boxes when running the script.
@@ -106,7 +106,7 @@ The script offers a user-friendly interface with three main configuration steps:
      - Background subtraction method:
        - Standard subtraction: Subtracts a fixed value from each pixel
        - Rolling ball method: Uses ImageJ's rolling ball algorithm to remove uneven background (value represents radius in pixels)
-     - Maximum display value
+     - Maximum display value in PNG images
      - Color for visualization
      - Suffix for naming output files
 
@@ -194,8 +194,6 @@ Download the example data and analysis files: <a href="https://github.com/Multic
 
 The ZIP file contains:
 - Original microscopy images
-- The analysis subfolder with the results of running the plugin
-
 
 ### Interactive Analysis in Google Colab
 
