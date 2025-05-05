@@ -255,3 +255,8 @@ This tool utilizes the [StarDist](https://github.com/stardist/stardist) algorith
 <a name="citation"/>
 ## Citation
 Pending publication
+
+
+## License
+MIT License
+Copyright (c) 2025 Ariel Waisman
