@@ -91,6 +91,12 @@ This plugin requires FIJI running on **Java 8** to function properly. Due to ong
 
 This compatibility issue is temporary and will be resolved once the TensorFlow and StarDist plugins are updated to support Java 21. We will update this documentation when full compatibility is achieved.
 
+On macOS systems, users may encounter permission-related errors (e.g., "Can't create an ImageOutputStream" or "Permission denied") when the plugin attempts to save files. This is due to macOS security restrictions. To resolve this issue, users should:
+1. Ensure FIJI has permission to access the folder containing the images (avoid using system-protected locations like Desktop or Documents)
+2. Move the image files to a user-created folder with full permissions (e.g., create a new folder in your home directory)
+3. If using the Desktop or Documents folders, grant FIJI full disk access in System Preferences > Security & Privacy > Privacy > Full Disk Access
+
+
 <a name="usage"/>
 ## Usage
 
