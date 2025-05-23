@@ -12,11 +12,12 @@ An ImageJ/FIJI plugin for analyzing multi-channel fluorescence images with a foc
 1. [Introduction](#introduction)
 2. [Installation](#installation)
 3. [Requirements](#requirements)
-4. [Usage](#usage)
-5. [Tutorial and Example Data Analysis with Python](#example)
-6. [Plugin for Merging Channels into Multi-Channel TIF Files](#merge)
-7. [Credits](#credits)
-8. [Citation](#cite)
+4. [Compatibility Notice](#compatibility)
+5. [Usage](#usage)
+6. [Tutorial and Example Data Analysis with Python](#example)
+7. [Plugin for Merging Channels into Multi-Channel TIF Files](#merge)
+8. [Credits](#credits)
+9. [Citation](#cite)
 
 <a name="introduction"/>
 ## Introduction
@@ -59,6 +60,36 @@ To install Stardist, CSBDeep, and TensorFlow plugins in FIJI:
 7. Restart FIJI
 
 This will ensure that StarDist and all its dependencies (CSBDeep and TensorFlow) are properly installed.
+
+<a name="compatibility"/>
+## Compatibility Notice
+
+### Important: Java Version Compatibility
+
+This plugin requires FIJI running on **Java 8** to function properly. Due to ongoing transitions in the FIJI/ImageJ ecosystem, the latest FIJI releases now use Java 21, which causes compatibility issues with TensorFlow and StarDist plugins that this tool depends on.
+
+### How to Check Your FIJI's Java Version
+
+1. Open FIJI
+2. Go to `Help > About ImageJ...`
+3. Look for the Java version information in the about dialog
+   - If it shows Java 1.8.x, your FIJI is compatible
+   - If it shows Java 17.x or 21.x, you need to download the stable version
+
+### How to Get a Compatible Version
+
+1. Go to the [FIJI download page](https://imagej.net/software/fiji/downloads)
+2. Download the **stable version** (right column) for your operating system
+   - Choose the **JRE** (Java Runtime Environment) version, not the JDK version
+   - The stable versions run on Java 8 and are fully compatible with this plugin
+   - Avoid the latest versions (left column) which run on Java 21
+
+### Compatibility Status
+
+- **Windows, macOS, and Linux**: Compatible with stable FIJI versions (Java 8)
+- **All platforms**: Not compatible with latest FIJI versions (Java 21)
+
+This compatibility issue is temporary and will be resolved once the TensorFlow and StarDist plugins are updated to support Java 21. We will update this documentation when full compatibility is achieved.
 
 <a name="usage"/>
 ## Usage
