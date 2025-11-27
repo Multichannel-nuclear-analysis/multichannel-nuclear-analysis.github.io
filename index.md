@@ -289,7 +289,7 @@ This tool utilizes the [StarDist](https://github.com/stardist/stardist) algorith
 > Cell Detection with Star-convex Polygons.  
 > International Conference on Medical Image Computing and Computer-Assisted Intervention (MICCAI), Granada, Spain, September 2018.
 
-<a name="citation"/>
+<a name="cite"/>
 ## Citation
 
 > Waisman A. 2025. Multi-Channel Nuclear Analysis: An ImageJ/FIJI Plugin for Automated Nuclear Segmentation and Multi-Channel Fluorescence Analysis. microPublication Biology. <a href="https://doi.org/10.17912/micropub.biology.001590" target="_blank" rel="noopener noreferrer">10.17912/micropub.biology.001590</a>.
