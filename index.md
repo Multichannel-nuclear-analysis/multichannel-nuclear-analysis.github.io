@@ -14,10 +14,11 @@ An ImageJ/FIJI plugin for analyzing multi-channel fluorescence images with a foc
 3. [Requirements](#requirements)
 4. [Compatibility Notice](#compatibility)
 5. [Usage](#usage)
-6. [Tutorial and Example Data Analysis with Python](#example)
-7. [Plugin for Merging Channels into Multi-Channel TIF Files](#merge)
-8. [Credits](#credits)
-9. [Citation](#cite)
+6. [Re-analysis Using Existing ROIs](#reanalysis)
+7. [Tutorial and Example Data Analysis with Python](#example)
+8. [Plugin for Merging Channels into Multi-Channel TIF Files](#merge)
+9. [Credits](#credits)
+10. [Citation](#cite)
 
 <a name="introduction"/>
 ## Introduction
@@ -198,7 +199,97 @@ The CSV tables are the primary output for further quantitative analysis:
 - Adjust the StarDist parameters if needed for optimal segmentation
 - Consider pre-processing images if they have high background or noise
 
+<a name="reanalysis"/>
+## Re-analysis Using Existing ROIs
 
+After running the plugin and generating nuclear ROIs, you may want to manually edit the ROIs for specific images to improve segmentation accuracy or correct errors. The plugin provides a feature to re-run the analysis using previously generated ROI files, allowing you to refine your results without re-running the computationally intensive StarDist segmentation.
+
+### When to Use This Feature
+
+This feature is particularly useful when:
+- You need to manually correct segmentation errors (e.g., merge incorrectly split nuclei, remove false positives)
+- You want to refine ROIs based on visual inspection
+- You need to re-analyze images with different channel processing parameters while keeping the same nuclear boundaries
+- You want to update measurements after modifying ROIs without re-segmenting all images
+
+### Prerequisites
+
+Before using this feature, ensure that:
+1. You have previously run the plugin and generated ROI files
+2. The `Analysis` folder exists in your input directory
+3. All ROI files (`[ImageName]RoiSet.zip`) are present in the `Analysis` folder for the images you want to re-analyze
+4. If you've manually edited ROIs, they have been saved with the same filename as the original ROI files
+
+### Step-by-Step Instructions
+
+1. **Manually Edit ROIs (if needed)**:
+   - Open ImageJ/FIJI
+   - Open the image you want to edit
+   - Load the ROI file: `Plugins > ROI Manager > Open` and navigate to `Analysis/[ImageName]RoiSet.zip`
+   - Edit ROIs as needed using ImageJ's ROI tools:
+     - Add ROIs: Draw new selections and add them to the ROI Manager
+     - Delete ROIs: Select unwanted ROIs in the ROI Manager and click "Delete"
+     - Modify ROIs: Select and edit existing ROIs using the selection tools
+   - Save the modified ROIs: `ROI Manager > Save` and save with the same filename (`[ImageName]RoiSet.zip`) in the `Analysis` folder
+
+2. **Run the Plugin in Re-analysis Mode**:
+   - Open ImageJ/FIJI
+   - Run the plugin: `Plugins > Multi-Channel Nuclear Analysis > Run Analysis`
+   - **Step 1 - Welcome Dialog**: Configure the number of channels and measurement settings as usual
+   - **Step 2 - Channel Configuration**: Configure all channel settings (background subtraction, display values, colors, suffixes) as you would for a new analysis
+   - **Step 3 - Merge and Segmentation Configuration**:
+     - Select which channels to include in the merged visualization
+     - In the **"Segmentation Channel"** dropdown, select **"Use existing ROIs (skip segmentation)"**
+     - Click "Finish"
+
+3. **Select Input Directory**:
+   - When prompted, select the same input directory containing your images (not the Analysis directory)
+   - The plugin will automatically:
+     - Verify that the `Analysis` folder exists
+     - Check that all ROI files are present for the images in the directory
+     - Proceed with re-analysis if all files are found
+
+4. **Processing**:
+   - The plugin will skip the StarDist segmentation step
+   - It will load the existing (and potentially edited) ROI files
+   - All channel processing, measurements, and CSV generation will proceed as normal
+   - New output files will be generated, overwriting previous results
+
+### Important Notes
+
+- **ROI File Naming**: ROI files must be named exactly as `[ImageName]RoiSet.zip` where `[ImageName]` matches the base name of your image file (without extension). For example, if your image is `experiment1.tif`, the ROI file should be `experiment1RoiSet.zip`.
+
+- **File Verification**: The plugin will verify that all ROI files exist before processing. If any ROI files are missing, the plugin will display an error message listing all missing files and exit without processing.
+
+- **Output Files**: All output files (processed images, CSV tables, merged images) will be regenerated using the existing ROIs. Previous output files in the `Analysis` folder will be overwritten.
+
+- **Parameters File**: The `analysis_parameters.txt` file will be updated with a new section indicating that the analysis used existing ROIs, along with the new channel configuration settings.
+
+- **Channel Configuration**: You can change channel processing parameters (background subtraction, display values, etc.) when re-analyzing. Only the segmentation step is skipped; all other processing steps are performed with your new settings.
+
+### Troubleshooting
+
+- **"Analysis folder not found"**: Ensure you're selecting the same input directory where you originally ran the analysis. The `Analysis` folder should be a subfolder within that directory.
+
+- **"ROI file not found"**: Check that:
+  - The ROI file exists in the `Analysis` folder
+  - The filename matches exactly (case-sensitive on some systems)
+  - The base name matches your image filename (without extension)
+
+- **ROIs not appearing correctly**: If ROIs don't appear as expected after loading:
+  - Verify the ROI file was saved correctly after editing
+  - Check that the image dimensions match the original (ROIs are pixel-coordinate based)
+  - Ensure you're opening the correct image file
+
+### Workflow Example
+
+1. Initial analysis: Run the plugin on a set of images → generates ROIs and measurements
+2. Visual inspection: Review segmentation results and identify images needing correction
+3. Manual editing: Open problematic images, load ROIs, make corrections, save
+4. Re-analysis: Run plugin with "Use existing ROIs" option → regenerates all outputs with corrected ROIs
+5. Data analysis: Use updated CSV files for downstream analysis
+
+This workflow allows you to iteratively refine your segmentation results while maintaining consistency in your analysis pipeline.
 
 <a name="example"/>
 ## Full tutorial on youtube
