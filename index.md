@@ -7,6 +7,10 @@ title: Multichannel Nuclear Analysis plugin
 
 An ImageJ/FIJI plugin for analyzing multi-channel fluorescence images with a focus on nuclear segmentation using StarDist. If you find this plugin useful, please cite :)
 
+## Updates
+
+**December 2025**: Added re-analysis capability allowing users to re-run the analysis using previously generated ROI files. This feature enables manual ROI editing and refinement without re-running the computationally intensive StarDist segmentation. See the [Re-analysis Using Existing ROIs](#reanalysis) section for details.
+
 ## Table of Contents
 
 1. [Introduction](#introduction)
