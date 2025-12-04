@@ -5,7 +5,7 @@
 // Description: GUI-based tool for analyzing multi-channel fluorescence images
 // Author: Ariel Waisman
 // Version: 1.1
-// Date: 2025
+// Date: December 2025
 
 // Multi-channel Fluorescence Image Analysis Macro with GUI
 // Description: Analyzes multi-channel fluorescence images with configurable parameters via GUI
