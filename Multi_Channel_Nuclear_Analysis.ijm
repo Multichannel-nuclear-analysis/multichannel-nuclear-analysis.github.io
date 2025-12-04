@@ -4,7 +4,7 @@
 // Menu: Plugins>Multi-Channel Nuclear Analysis>Run Analysis
 // Description: GUI-based tool for analyzing multi-channel fluorescence images
 // Author: Ariel Waisman
-// Version: 1.0
+// Version: 1.1
 // Date: 2025
 
 // Multi-channel Fluorescence Image Analysis Macro with GUI
