@@ -140,6 +140,7 @@ var channel_use_rolling_ball = newArray(4); // New array to track if rolling bal
 var segmentation_channel = 1;
 var num_channels = 4; // Number of channels selected by user
 var channelPage = 0;  // Current page in the channel configuration dialog
+var use_existing_rois = false; // Flag to indicate if we should use existing ROI files instead of running segmentation
 
 // Initialize arrays with -1 to detect first run
 for (i=0; i<4; i++) {
@@ -206,9 +207,24 @@ if (list.length == 0) {
     exit("No files found in the selected directory. Please choose a directory containing images.");
 }
 
-// Create output directory
+// Set output directory
 output_dir = dir + "Analysis" + File.separator;
-File.makeDirectory(output_dir);
+
+// If using existing ROIs mode, verify the Analysis folder exists and check ROI files
+if (use_existing_rois) {
+    // Check if Analysis folder exists
+    if (!File.exists(output_dir)) {
+        exit("Analysis folder not found at: " + output_dir + "\n\nPlease ensure the Analysis folder exists from a previous run of the plugin.");
+    }
+    
+    // Verify all ROI files exist
+    print("Checking for existing ROI files...");
+    verifyExistingROIFiles(dir, output_dir);
+    print("Using existing ROI files - skipping segmentation step.");
+} else {
+    // Create output directory if it doesn't exist (for new analysis)
+    File.makeDirectory(output_dir);
+}
 
 // Save parameters to a text file for reference
 saveParametersToFile(output_dir);
@@ -503,6 +519,9 @@ function showMergeSegmentDialog() {
         }
     }
     
+    // Add option to use existing ROIs
+    labels = Array.concat(labels, "Use existing ROIs (skip segmentation)");
+    
     if (labels.length > 0) {
     Dialog.addChoice("Segmentation Channel", labels, labels[0]);
     } else {
@@ -529,8 +548,15 @@ function showMergeSegmentDialog() {
     
     // Store segmentation choice only if we have active channels
     if (labels.length > 0) {
-    choice = Dialog.getChoice();
-    segmentation_channel = parseInt(choice.replace("Channel ", ""));
+        choice = Dialog.getChoice();
+        // Check if user selected "Use existing ROIs" option
+        if (choice == "Use existing ROIs (skip segmentation)") {
+            use_existing_rois = true;
+            segmentation_channel = 0; // Set to 0 to indicate we're not using a channel for segmentation
+        } else {
+            use_existing_rois = false;
+            segmentation_channel = parseInt(choice.replace("Channel ", ""));
+        }
     }
     
     // Check navigation choice
@@ -544,6 +570,45 @@ function showMergeSegmentDialog() {
 }
 
 // ---- PROCESSING FUNCTIONS ----
+
+// Function to verify that all ROI files exist for images in the directory
+function verifyExistingROIFiles(dir, output_dir) {
+    // Get list of image files
+    list = getFileList(dir);
+    missing_files = newArray(0);
+    missing_count = 0;
+    
+    // Check each image file
+    for (i=0; i<list.length; i++) {
+        if (matches(list[i], ".*\\.(czi|tif|tiff)$")) {
+            // Get base filename without extension
+            titulo_base = replace(list[i], "\\.(czi|tif|tiff)$", "");
+            roi_file_path = output_dir + titulo_base + "RoiSet.zip";
+            
+            // Check if ROI file exists
+            if (!File.exists(roi_file_path)) {
+                missing_files = Array.concat(missing_files, list[i]);
+                missing_count++;
+                print("Warning: ROI file not found for image: " + list[i] + " (expected: " + roi_file_path + ")");
+            }
+        }
+    }
+    
+    // If any files are missing, show error and exit
+    if (missing_count > 0) {
+        error_msg = "The following " + missing_count + " image(s) are missing ROI files:\n\n";
+        for (i=0; i<missing_files.length; i++) {
+            error_msg = error_msg + "- " + missing_files[i] + "\n";
+        }
+        error_msg = error_msg + "\nPlease ensure all ROI files exist in the Analysis folder before using 'Use existing ROIs' mode.";
+        
+        showMessage("Missing ROI Files", error_msg);
+        exit("Cannot proceed: " + missing_count + " ROI file(s) are missing. Please check the Analysis folder.");
+    }
+    
+    print("Verified: All " + (list.length - missing_count) + " image(s) have corresponding ROI files.");
+    return true;
+}
 
 function processFile(dir, file, output_dir) {
     print("----------------------------");
@@ -568,8 +633,20 @@ function processFile(dir, file, output_dir) {
     // Validate channel count
     validateChannelCount(titulo);
     
-    // Process segmentation channel first
-    if (segmentation_channel > 0) {
+    // Process segmentation or load existing ROIs
+    if (use_existing_rois) {
+        // Load existing ROIs instead of running segmentation
+        // Use first active channel for visualization purposes
+        visualization_channel = 1;
+        for (i=0; i<4; i++) {
+            if (channel_active[i]) {
+                visualization_channel = i+1;
+                break;
+            }
+        }
+        loadExistingROIs(titulo, titulo_base, visualization_channel);
+    } else if (segmentation_channel > 0) {
+        // Run normal segmentation
         processSegmentationChannel(titulo, titulo_base, segmentation_channel);
     }
     
@@ -695,6 +772,67 @@ function processSegmentationChannel(titulo, titulo_base, channel_num) {
     
     // Save ROIs
     roiManager("Save", output_dir + titulo_base + "RoiSet.zip");
+}
+
+// Function to load existing ROIs instead of running StarDist segmentation
+function loadExistingROIs(titulo, titulo_base, channel_num) {
+    // Get the channel settings for visualization
+    maxDisplay = channel_max_display[channel_num-1];
+    colorName = channel_colors[channel_num-1];
+    
+    // Path to the existing ROI file
+    roi_file_path = output_dir + titulo_base + "RoiSet.zip";
+    
+    // Check if ROI file exists
+    if (!File.exists(roi_file_path)) {
+        print("ERROR: ROI file not found: " + roi_file_path);
+        exit("ROI file not found for image: " + titulo + "\nExpected: " + roi_file_path);
+    }
+    
+    // Duplicate segmentation channel for visualization
+    selectWindow(titulo);
+    titulo_seg = titulo_base + "_segmentation";
+    run("Duplicate...", "title='"+titulo_seg+"' duplicate channels="+channel_num);
+    
+    // Apply background subtraction if needed (same as in normal segmentation)
+    background = channel_background[channel_num-1];
+    if (background > 0) {
+        if (channel_use_rolling_ball[channel_num-1]) {
+            run("Subtract Background...", "rolling=" + background);
+        } else {
+            run("Subtract...", "value=" + background);
+        }
+    }
+    
+    // Apply the color and display settings
+    run(colorName);
+    setMinAndMax(0, maxDisplay);
+    
+    // Clear ROI Manager before loading (in case there are ROIs from previous images)
+    roiManager("Reset");
+    
+    // Load existing ROIs from file
+    print("Loading existing ROIs from: " + roi_file_path);
+    roiManager("Open", roi_file_path);
+    roi_count = roiManager("count");
+    print("Loaded " + roi_count + " ROIs from existing file.");
+    
+    // Create visualization with ROIs overlaid
+    selectWindow(titulo_seg);
+    roiManager("Show All without labels"); 
+    run("Flatten");
+    
+    // Save the segmentation visualization
+    saveAs("PNG", output_dir + titulo_base + "_segmentation");
+    close();
+    
+    // Clean up
+    if (isOpen(titulo_seg)) {
+        selectWindow(titulo_seg);
+        close();
+    }
+    
+    // ROIs are already loaded in ROI Manager, no need to save again
 }
 
 function processChannel(titulo, titulo_base, channel_config) {
@@ -952,7 +1090,18 @@ function saveParametersToFile(output_dir) {
     // Create file for parameters
     file_path = output_dir + "analysis_parameters.txt";
     
+    // Check if file exists (for existing ROIs mode, we append to existing file)
+    file_exists = File.exists(file_path);
+    
     // Use the append method directly instead of open/close
+    if (file_exists && use_existing_rois) {
+        // Add separator for new run when using existing ROIs
+        File.append("", file_path);
+        File.append("========================================", file_path);
+        File.append("RE-ANALYSIS USING EXISTING ROIs", file_path);
+        File.append("========================================", file_path);
+    }
+    
     File.append("=== Multi-Channel Analysis Parameters ===", file_path);
     File.append("Generated on: " + date_str + " at " + time_str, file_path);
     File.append("Number of channels configured: " + num_channels, file_path);
@@ -995,11 +1144,17 @@ function saveParametersToFile(output_dir) {
     
     // Segmentation settings
     File.append("=== SEGMENTATION SETTINGS ===", file_path);
-    File.append("Segmentation Channel: " + segmentation_channel, file_path);
-    File.append("StarDist Model: " + stardist_model, file_path);
-    File.append("Probability Threshold: " + prob_thresh, file_path);
-    File.append("NMS Threshold: " + nms_thresh, file_path);
-    File.append("Exclude Boundary: " + exclude_boundary, file_path);
+    if (use_existing_rois) {
+        File.append("Mode: Using existing ROI files (skip segmentation)", file_path);
+        File.append("Note: ROIs were loaded from previous analysis and may have been manually edited", file_path);
+    } else {
+        File.append("Mode: New segmentation using StarDist", file_path);
+        File.append("Segmentation Channel: " + segmentation_channel, file_path);
+        File.append("StarDist Model: " + stardist_model, file_path);
+        File.append("Probability Threshold: " + prob_thresh, file_path);
+        File.append("NMS Threshold: " + nms_thresh, file_path);
+        File.append("Exclude Boundary: " + exclude_boundary, file_path);
+    }
     
     // No need to close the file - File.append handles that automatically
     print("Parameters saved to: " + file_path);
